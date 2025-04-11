@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags -->
+    <title>OSAIDE | Organizzazione, Science, AI, Data, Efficiency</title>
+    <meta name="description" content="OSAIDE - Freelance specializzato in Organizzazione Aziendale potenziata da Scienza dei Dati, Intelligenza Artificiale ed Efficienza Operativa. Trasformiamo dati in decisioni strategiche e processi ottimizzati.">
+    <meta name="keywords" content="organizzazione aziendale, data science, intelligenza artificiale, AI, efficienza operativa, data analyst, freelance, analisi dati, business intelligence, automazione processi, python, R, SQL, Power BI, Tableau, consulente dati, PMI, ottimizzazione processi">
+    <meta name="author" content="OSAIDE">
+    <!-- Favicon Placeholder -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="OSAIDE | Data-Driven Organization & Efficiency">
+    <meta property="og:description" content="Potenziamo le PMI con organizzazione intelligente, analisi dati avanzate e automazioni efficienti.">
+    <meta property="og:image" content="placeholder-og-image.jpg"> <!-- !! SOSTITUIRE !! -->
+    <meta property="og:url" content="https://tuo-dominio.com"> <!-- !! SOSTITUIRE !! -->
+    <meta property="og:type" content="website">
+
+    <!-- Stylesheets & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- JavaScript Libraries -->
+    <!-- Libreria threejs-toys per Neon Cursor -->
+    <script type="module" src="https://unpkg.com/threejs-toys@0.0.8/build/threejs-toys.module.cdn.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #f59e0b; /* Amber 500 */
+            --secondary: #10b981; /* Emerald 500 */
+            --accent: #3b82f6; /* Blue 500 */
+            --dark: #0f172a; /* Slate 900 */
+            --darker: #020617; /* Slate 950 */
+            --light: #e2e8f0; /* Slate 200 */
+            --nav-width: 5rem; /* 80px */
+            /* Variabili Neon */
+            --clr-neon: var(--primary);
+            --clr-neon-rgb: 245, 158, 11;
+            --clr-bg-neon-hover: var(--darker);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            /* Background gradiente statico */
+            background-color: var(--darker);
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            color: var(--light);
+            position: relative; /* Necessario per z-index figli */
+        }
+        @media (min-width: 768px) {
+            body { padding-left: var(--nav-width); }
+        }
+
+        /* --- Navigazione (Hamburger/Sidebar) --- */
+        .sidebar {
+            width: var(--nav-width);
+            border-right: 1px solid rgba(var(--clr-neon-rgb), 0.3);
+            transform: translateX(-100%); /* Nascosto mobile */
+            position: fixed; left: 0; top: 0; height: 100%;
+            background: linear-gradient(to bottom, var(--dark), var(--darker));
+            display: flex; flex-direction: column; align-items: center;
+            padding: 1.5rem 0; z-index: 50; /* Sidebar sopra contenuto e sfondo */
+            transition: transform 0.3s ease, width 0.3s ease;
+        }
+        /* ... altri stili sidebar, nav-link, hamburger, overlay ... */
+         @media (min-width: 768px) { .sidebar { transform: translateX(0); } }
+        .sidebar.mobile-active { transform: translateX(0); width: 250px; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
+        .sidebar-brand-text { display: none; }
+        .sidebar.mobile-active .sidebar-brand-text { display: block; }
+        .nav-link { position: relative; transition: all 0.3s ease; width: 100%; display: flex; justify-content: center; padding: 1rem 0; color: var(--light); }
+        .sidebar.mobile-active .nav-link { justify-content: flex-start; padding: 0.8rem 1.5rem; gap: 1rem; }
+        .nav-link i { transition: transform 0.3s ease, color 0.3s ease; width: 2rem; text-align: center; }
+        .sidebar.mobile-active .nav-link i { width: auto; text-align: left; }
+        .nav-link:hover { color: var(--clr-neon); }
+        .nav-link.active { color: var(--clr-neon); background-color: rgba(var(--clr-neon-rgb), 0.1); }
+        .sidebar.mobile-active .nav-link.active { border-left: 3px solid var(--clr-neon); padding-left: calc(1.5rem - 3px); background-color: rgba(var(--clr-neon-rgb), 0.15); }
+        .nav-link-text { display: none; font-size: 0.9rem; font-weight: 500; }
+        .sidebar.mobile-active .nav-link-text { display: inline; }
+        #menu-toggle { display: block; position: fixed; top: 15px; left: 15px; z-index: 100; background: rgba(15, 23, 42, 0.7); border: 1px solid var(--clr-neon); color: var(--clr-neon); padding: 8px 10px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; }
+        #menu-toggle:hover { background: var(--clr-neon); color: var(--darker); box-shadow: 0 0 1em 0.2em var(--clr-neon); }
+        @media (min-width: 768px) { #menu-toggle { display: none; } }
+        #menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 49; }
+        #menu-overlay.active { display: block; }
+
+        /* --- Main Content Area --- */
+        main {
+            position: relative; /* Assicura contesto stacking */
+            z-index: 10; /* Sopra lo sfondo/canvas ma sotto la sidebar aperta */
+        }
+
+        /* --- Sezioni --- */
+        .section { min-height: 100vh; padding: 4rem 1rem; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+        @media (min-width: 768px) { .section { padding: 4rem 2rem; } }
+        @media (min-width: 1024px) { .section { padding: 5rem 3rem; } }
+
+        /* --- Stili Effetti (Glass, Glitch, Highlight, UV) --- */
+        /* ... stili invariati ... */
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 1rem; border: 1px solid rgba(var(--clr-neon-rgb), 0.2); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .glitch { position: relative; }
+        .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
+        .glitch::before { color: #0ff; z-index: -1; animation: glitch-effect 3s infinite linear alternate-reverse; }
+        .glitch::after { color: #f0f; z-index: -2; animation: glitch-effect 2s infinite linear alternate; }
+        @keyframes glitch-effect{0%,100%{clip-path:inset(0 0 98% 0)}10%,90%{clip-path:inset(98% 0 1% 0)}20%,80%{clip-path:inset(5% 0 80% 0)}30%,70%{clip-path:inset(90% 0 3% 0)}40%,60%{clip-path:inset(10% 0 60% 0)}50%{clip-path:inset(40% 0 40% 0)}}
+        .highlight { display: inline; background: linear-gradient(90deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+        .uv-shadow { box-shadow: 0 0 10px rgba(var(--clr-neon-rgb), 0.5), 0 0 20px rgba(var(--clr-neon-rgb), 0.3), 0 0 30px rgba(var(--clr-neon-rgb), 0.2); }
+        .uv-text { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--clr-neon), 0 0 20px var(--clr-neon); animation: uv-pulse 2s infinite alternate; }
+        @keyframes uv-pulse { from { opacity: 0.8; } to { opacity: 1; } }
+
+
+        /* --- Bottoni Neon --- */
+        /* ... stili bottoni invariati ... */
+        .btn { padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 500; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; position: relative; border: 2px solid transparent; }
+        .btn-primary { background-color: var(--clr-neon); color: var(--clr-bg-neon-hover); border-color: var(--clr-neon); text-shadow: none; box-shadow: 0 0 0.5em 0 rgba(var(--clr-neon-rgb), 0.5); }
+        .btn-primary:hover, .btn-primary:focus { background-color: var(--clr-neon); color: var(--clr-bg-neon-hover); text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em currentColor; box-shadow: inset 0 0 0.7em 0 var(--clr-neon), 0 0 1.5em 0.3em var(--clr-neon); }
+        .btn-secondary { border: 2px solid var(--clr-neon); color: var(--clr-neon); background-color: transparent; text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em currentColor; box-shadow: inset 0 0 0.5em 0 var(--clr-neon), 0 0 0.5em 0 var(--clr-neon); }
+        .btn-secondary:hover, .btn-secondary:focus { background-color: var(--clr-neon); color: var(--clr-bg-neon-hover); text-shadow: none; box-shadow: 0 0 2em 0.5em var(--clr-neon); }
+
+        /* --- Form Contatti --- */
+        .form-input, .form-textarea { background-color: rgba(15, 23, 42, 0.5); border: 1px solid rgba(226, 232, 240, 0.2); border-radius: 8px; padding: 0.75rem 1rem; color: var(--light); width: 100%; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(var(--clr-neon-rgb), 0.4); }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--light); }
+
+        /* --- Portfolio Card --- */
+        .portfolio-card { background: var(--dark); border-radius: 10px; overflow: hidden; border: 1px solid rgba(226, 232, 240, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .portfolio-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(2, 6, 23, 0.5), 0 0 15px rgba(var(--clr-neon-rgb), 0.2); } /* Aggiunto glow neon hover */
+        .portfolio-card img { width: 100%; height: 200px; object-fit: cover; }
+        .portfolio-tags span { background-color: rgba(var(--clr-neon-rgb), 0.1); color: var(--clr-neon); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.75rem; font-weight: 500; }
+
+        /* --- Responsive Specifiche --- */
+        @media (max-width: 767px) { /* ... stili mobile specifici ... */ }
+
+        /* === MODIFICA CHIAVE: Stili per il Canvas di Neon Cursor === */
+        body > canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%; /* Assicura che copra tutto lo schermo */
+            height: 100%; /* Assicura che copra tutto lo schermo */
+            z-index: 5; /* Dietro il contenuto (main=10) ma sopra lo sfondo base */
+            pointer-events: none; /* Fondamentale per non bloccare click */
+            /* background: transparent !important; */ /* Forse non necessario se la libreria lo fa */
+            /* opacity: 0.8; */ /* Prova a ridurre opacità se necessario */
+        }
+    </style>
+</head>
+<body id="app">
+
+    <button id="menu-toggle" aria-label="Apri menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div id="menu-overlay"></div>
+
+    <nav id="sidebar" class="sidebar">
+        <!-- Logo -->
+        <div class="sidebar-logo mb-8 px-4 w-full">
+             <!-- MODIFICATO: Logo con testo richiesto -->
+            <a href="#home" class="block w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-gray-900 font-bold text-lg shadow-lg hover:scale-105 transition-transform mx-auto" style="letter-spacing: -1px;">
+                --&lt;d&gt;--
+            </a>
+            <span class="text-xl font-bold text-center block mt-4 text-gray-200 sidebar-brand-text">OSAIDE</span>
+        </div>
+        <!-- Link Navigazione -->
+        <div class="flex flex-col items-center space-y-1 flex-grow justify-center w-full overflow-y-auto">
+            <!-- ... Link della navbar (invariati da prima) ... -->
+             <a href="#home" class="nav-link" data-section="home"> <i class="fas fa-home text-xl"></i> <span class="nav-link-text" data-key="nav-home">Home</span> </a>
+             <a href="#mission" class="nav-link" data-section="mission"> <i class="fas fa-bullseye text-xl"></i> <span class="nav-link-text" data-key="nav-mission">Missione</span> </a>
+             <a href="#vision" class="nav-link" data-section="vision"> <i class="fas fa-eye text-xl"></i> <span class="nav-link-text" data-key="nav-vision">Visione</span> </a>
+             <a href="#services" class="nav-link" data-section="services"> <i class="fas fa-cogs text-xl"></i> <span class="nav-link-text" data-key="nav-services">Servizi</span> </a>
+             <a href="#portfolio" class="nav-link" data-section="portfolio"> <i class="fas fa-briefcase text-xl"></i> <span class="nav-link-text" data-key="nav-portfolio">Progetti</span> </a>
+             <a href="#certifications" class="nav-link" data-section="certifications"> <i class="fas fa-certificate text-xl"></i> <span class="nav-link-text" data-key="nav-certifications">Competenze</span> </a>
+             <a href="#contacts" class="nav-link" data-section="contacts"> <i class="fas fa-envelope text-xl"></i> <span class="nav-link-text" data-key="nav-contacts">Contatti</span> </a>
+        </div>
+        <!-- Bottone Contatti Sidebar -->
+        <div class="sidebar-contact-button mt-auto py-4">
+            <!-- ... bottone invariato ... -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section flex items-center justify-center">
+            <!-- ... contenuto Home section ripristinato ... -->
+             <div class="max-w-4xl mx-auto text-center px-4"> <div class="glass p-10 md:p-12 rounded-xl uv-shadow"> <h1 class="text-4xl sm:text-5xl md:text-6xl font-black mb-6 glitch" data-text="OSAIDE"> <span class="highlight uv-text">OSAIDE</span> </h1> <p class="text-lg md:text-xl text-gray-300 mb-10" data-key="home-subtitle"> Organizzazione, Science, AI, Dati, Efficienza. Potenziamo le PMI trasformando <span class='highlight'>dati complessi</span> in <span class='highlight'>processi efficienti</span> e decisioni strategiche. </p> <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"> <a href="#portfolio" class="btn btn-primary" data-key="view-work"> <i class="fas fa-folder-open"></i> Vedi Progetti </a> <a href="#contacts" class="btn btn-secondary" data-key="get-in-touch"> <i class="fas fa-envelope"></i> Contattaci </a> </div> </div> </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section id="mission" class="section flex items-center">
+            <!-- ... contenuto Mission section ripristinato ... -->
+             <div class="max-w-5xl mx-auto px-4"> <div class="glass p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center glitch" data-text="Missione"> <span class="highlight uv-text">Missione</span> </h2> <div class="grid md:grid-cols-2 gap-8 items-center"> <div> <p class="text-lg text-gray-300 mb-6" data-key="mission-text-1"> Guidare le PMI verso l'<span class="highlight">efficienza operativa</span> e il <span class="highlight">vantaggio competitivo</span> attraverso l'organizzazione intelligente dei processi, potenziata dall'analisi scientifica dei dati e da soluzioni AI mirate. </p> <p class="text-lg text-gray-300 mb-6" data-key="mission-text-2"> Fornire strumenti e metodologie <span class="highlight">su misura</span>, concreti e sostenibili, che trasformino i dati in valore tangibile, rispettando le specificità e i budget di ogni realtà aziendale. </p> <div class="flex space-x-4 mt-6"> <div class="bg-dark p-4 rounded-lg border border-primary/20 text-center flex-1"> <i class="fas fa-shield-alt text-yellow-500 text-3xl mb-2"></i> <p class="text-sm text-gray-400" data-key="mission-icon1">Affidabilità</p> </div> <div class="bg-dark p-4 rounded-lg border border-primary/20 text-center flex-1"> <i class="fas fa-cogs text-yellow-500 text-3xl mb-2"></i> <p class="text-sm text-gray-400" data-key="mission-icon2">Efficienza</p> </div> <div class="bg-dark p-4 rounded-lg border border-primary/20 text-center flex-1"> <i class="fas fa-lightbulb text-yellow-500 text-3xl mb-2"></i> <p class="text-sm text-gray-400" data-key="mission-icon3">Innovazione Pratica</p> </div> </div> </div> <div class="relative h-64 md:h-80 bg-gradient-to-br from-dark to-darker rounded-xl overflow-hidden border border-yellow-500 border-opacity-20 flex items-center justify-center p-4"> <i class="fas fa-project-diagram text-yellow-500 text-8xl opacity-10"></i> <p class="absolute text-center text-lg text-gray-300 p-4 bg-black bg-opacity-30 rounded" data-key="mission-image-text">Dati -> Efficienza -> Crescita</p> </div> </div> </div> </div>
+        </section>
+
+        <!-- Vision Section -->
+        <section id="vision" class="section flex items-center">
+            <!-- ... contenuto Vision section ripristinato ... -->
+             <div class="max-w-5xl mx-auto px-4"> <div class="glass p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center glitch" data-text="Visione"> <span class="highlight uv-text">Visione</span> </h2> <div class="grid md:grid-cols-2 gap-8 items-center"> <div class="order-2 md:order-1 relative h-64 md:h-80 bg-gradient-to-br from-dark to-darker rounded-xl overflow-hidden border border-yellow-500 border-opacity-20 flex items-center justify-center p-4"> <i class="fas fa-brain text-yellow-500 text-8xl opacity-10"></i> <p class="absolute text-center text-lg text-gray-300 p-4 bg-black bg-opacity-30 rounded" data-key="vision-image-text">Organizzazioni potenziate dall'intelligenza dei dati</p> </div> <div class="order-1 md:order-2"> <p class="text-lg text-gray-300 mb-6" data-key="vision-text-1"> Un futuro in cui le PMI competono alla pari grazie a <span class="highlight">organizzazioni agili</span> e <span class="highlight">decisioni data-driven</span>, supportate da sistemi intelligenti che ottimizzano risorse e anticipano le esigenze del mercato. </p> <p class="text-lg text-gray-300 mb-6" data-key="vision-text-2"> Creare un ecosistema di <span class="highlight">soluzioni accessibili</span> e integrate che rendano l'automazione e l'analisi avanzata una leva strategica quotidiana, liberando potenziale umano per compiti a maggior valore aggiunto. </p> <div class="bg-dark p-4 rounded-lg inline-block border border-primary/30 mt-4"> <p class="text-yellow-400 font-medium italic" data-key="vision-quote"> "L'efficienza non è fare di più, ma fare meglio ciò che conta davvero, guidati dai dati." </p> </div> </div> </div> </div> </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="section flex items-center">
+             <!-- ... contenuto Services section ripristinato ... -->
+             <div class="max-w-6xl mx-auto px-4"> <div class="glass p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center glitch" data-text="Servizi OSAIDE"> <span class="highlight uv-text">Servizi OSAIDE</span> </h2> <p class="text-lg md:text-xl text-gray-300 mb-12 text-center max-w-3xl mx-auto" data-key="services-subtitle"> Soluzioni integrate per ottimizzare l'organizzazione, sfruttare i dati e automatizzare i processi della tua PMI. </p> <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"> <!-- Service 1 --> <div class="bg-gradient-to-br from-dark to-darker p-6 rounded-xl border border-primary/20 transition-all duration-300 hover:border-primary/50 hover:shadow-yellow-500/10 hover:shadow-lg"> <div class="w-16 h-16 bg-darker rounded-full flex items-center justify-center mb-5 border-2 border-primary/30"> <i class="fas fa-chart-pie text-yellow-500 text-3xl"></i> </div> <h3 class="text-xl font-bold text-gray-100 mb-3" data-key="service1-title">Data Intelligence & Reporting Strategico</h3> <p class="text-gray-400 mb-4 text-sm" data-key="service1-desc"> Trasformiamo i tuoi dati grezzi in conoscenza azionabile. Sviluppiamo dashboard interattive (Power BI, Looker Studio, ecc.) e report chiari per monitorare performance, identificare trend e supportare decisioni strategiche informate. </p> <ul class="space-y-2 text-sm"> <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-2"></i><span class="text-gray-400" data-key="service1-feature1">Cruscotti Decisionali KPI</span></li> <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-2"></i><span class="text-gray-400" data-key="service1-feature2">Analisi Esplorativa & Diagnostica</span></li> <li class="flex items-center"><i class="fas fa-check-circle text-yellow-500 mr-2"></i><span class="text-gray-400" data-key="service1-feature3">Reportistica Efficace e Puntuale</span></li> </ul> </div> <!-- Service 2 --> <div class="bg-gradient-to-br from-dark to-darker p-6 rounded-xl border border-secondary/20 transition-all duration-300 hover:border-secondary/50 hover:shadow-green-500/10 hover:shadow-lg"> <div class="w-16 h-16 bg-darker rounded-full flex items-center justify-center mb-5 border-2 border-secondary/30"> <i class="fas fa-gears text-green-500 text-3xl"></i> </div> <h3 class="text-xl font-bold text-gray-100 mb-3" data-key="service2-title">Ottimizzazione & Automazione Processi</h3> <p class="text-gray-400 mb-4 text-sm" data-key="service2-desc"> Mappiamo, ridisegniamo e automatizziamo i flussi di lavoro ripetitivi. Implementiamo soluzioni (low-code/scripting) per connettere sistemi, eliminare colli di bottiglia, ridurre errori e liberare tempo prezioso. </p> <ul class="space-y-2 text-sm"> <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i><span class="text-gray-400" data-key="service2-feature1">Integrazione Sistemi Aziendali</span></li> <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i><span class="text-gray-400" data-key="service2-feature2">Automazione Task Manuali</span></li> <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i><span class="text-gray-400" data-key="service2-feature3">Workflow Digitali Intelligenti</span></li> </ul> </div> <!-- Service 3 --> <div class="bg-gradient-to-br from-dark to-darker p-6 rounded-xl border border-accent/20 transition-all duration-300 hover:border-accent/50 hover:shadow-blue-500/10 hover:shadow-lg"> <div class="w-16 h-16 bg-darker rounded-full flex items-center justify-center mb-5 border-2 border-accent/30"> <i class="fas fa-sitemap text-blue-500 text-3xl"></i> </div> <h3 class="text-xl font-bold text-gray-100 mb-3" data-key="service3-title">Consulenza Organizzativa & Data Strategy</h3> <p class="text-gray-400 mb-4 text-sm" data-key="service3-desc"> Supporto strategico per definire la roadmap verso un'organizzazione data-driven. Aiutiamo a scegliere tecnologie adatte, strutturare la gestione dei dati, garantire qualità e compliance, e promuovere una cultura dell'efficienza basata sui fatti. </p> <ul class="space-y-2 text-sm"> <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i><span class="text-gray-400" data-key="service3-feature1">Assessment Maturità Organizzativa/Dati</span></li> <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i><span class="text-gray-400" data-key="service3-feature2">Disegno Architetture Dati Sostenibili</span></li> <li class="flex items-center"><i class="fas fa-check-circle text-blue-500 mr-2"></i><span class="text-gray-400" data-key="service3-feature3">Affiancamento e Formazione Team</span></li> </ul> </div> </div> </div> </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="section flex items-center">
+            <!-- ... contenuto Portfolio section ripristinato ... -->
+             <div class="max-w-6xl mx-auto px-4 w-full"> <div class="glass p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center glitch" data-text="Progetti Realizzati"> <span class="highlight uv-text">Progetti Realizzati</span> </h2> <p class="text-lg md:text-xl text-gray-300 mb-12 text-center max-w-3xl mx-auto" data-key="portfolio-subtitle"> Esempi concreti di come abbiamo aiutato le aziende a organizzarsi meglio, decidere con i dati e automatizzare per crescere. </p> <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"> <!-- Progetto 1 --> <div class="portfolio-card bg-dark rounded-xl overflow-hidden border border-primary/10"> <img src="https://via.placeholder.com/600x400/0f172a/f59e0b?text=Analisi+Cliente+Bikesharing" alt="Analisi Cliente Bikesharing" class="bg-gray-700"> <div class="p-6"> <h3 class="text-xl font-bold text-gray-100 mb-2" data-key="portfolio1-title">Analisi Strategica Clienti Bikesharing (Base Google Cert.)</h3> <p class="text-gray-400 text-sm mb-4" data-key="portfolio1-desc"> Studio approfondito per segmentare la clientela, identificare driver di utilizzo e suggerire azioni mirate per aumentare retention e conversioni. Realizzato con R. </p> <div class="portfolio-tags flex flex-wrap gap-2 mb-4"> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full" data-key="tag-r">R</span> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full" data-key="tag-analysis">Analisi Dati</span> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full" data-key="tag-segmentation">Segmentazione</span> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full" data-key="tag-strategy">Strategia</span> </div> <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm font-medium group" data-key="portfolio-view-details" target="_blank" rel="noopener noreferrer"> Vedi Analisi <i class="fas fa-arrow-right ml-1 transition-transform duration-200 group-hover:translate-x-1"></i> </a> </div> </div> <!-- Progetto 2 --> <div class="portfolio-card bg-dark rounded-xl overflow-hidden border border-secondary/10"> <img src="https://via.placeholder.com/600x400/0f172a/10b981?text=Dashboard+Performance+Aziendale" alt="Dashboard Performance Aziendale" class="bg-gray-700"> <div class="p-6"> <h3 class="text-xl font-bold text-gray-100 mb-2" data-key="portfolio2-title">Cruscotto Interattivo Performance Aziendale</h3> <p class="text-gray-400 text-sm mb-4" data-key="portfolio2-desc"> Sviluppo dashboard Power BI per monitoraggio integrato KPI vendite, marketing e operations. Analisi profittabilità e identificazione aree miglioramento. </p> <div class="portfolio-tags flex flex-wrap gap-2 mb-4"> <span class="text-xs bg-secondary/10 text-secondary px-3 py-1 rounded-full" data-key="tag-powerbi">Power BI</span> <span class="text-xs bg-secondary/10 text-secondary px-3 py-1 rounded-full" data-key="tag-sql">SQL</span> <span class="text-xs bg-secondary/10 text-secondary px-3 py-1 rounded-full" data-key="tag-bi">BI</span> <span class="text-xs bg-secondary/10 text-secondary px-3 py-1 rounded-full" data-key="tag-kpi">KPI Monitoring</span> </div> <a href="#" class="text-green-400 hover:text-green-300 text-sm font-medium group" data-key="portfolio-view-live" target="_blank" rel="noopener noreferrer"> Vedi Demo <i class="fas fa-arrow-right ml-1 transition-transform duration-200 group-hover:translate-x-1"></i> </a> </div> </div> <!-- Progetto 3 --> <div class="portfolio-card bg-dark rounded-xl overflow-hidden border border-accent/10"> <img src="https://via.placeholder.com/600x400/0f172a/3b82f6?text=Automazione+Flusso+Dati" alt="Automazione Flusso Dati" class="bg-gray-700"> <div class="p-6"> <h3 class="text-xl font-bold text-gray-100 mb-2" data-key="portfolio3-title">Automazione Flusso Dati e Reportistica</h3> <p class="text-gray-400 text-sm mb-4" data-key="portfolio3-desc"> Workflow automatizzato (Python/low-code) per estrarre dati da sorgenti multiple, consolidarli, generare report periodici e distribuirli ai team. </p> <div class="portfolio-tags flex flex-wrap gap-2 mb-4"> <span class="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full" data-key="tag-python">Python</span> <span class="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full" data-key="tag-automation">Automazione</span> <span class="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full" data-key="tag-etl">ETL</span> <span class="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full" data-key="tag-workflow">Workflow</span> </div> <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium group" data-key="portfolio-view-code" target="_blank" rel="noopener noreferrer"> Vedi Approccio <i class="fas fa-arrow-right ml-1 transition-transform duration-200 group-hover:translate-x-1"></i> </a> </div> </div> </div> </div> </div>
+        </section>
+
+        <!-- Certifications Section -->
+        <section id="certifications" class="section flex items-center">
+            <!-- ... contenuto Certifications section ripristinato ... -->
+             <div class="max-w-4xl mx-auto px-4 w-full"> <div class="glass p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center glitch" data-text="Formazione & Competenze"> <span class="highlight uv-text">Formazione & Competenze</span> </h2> <p class="text-lg md:text-xl text-gray-300 mb-10 text-center max-w-2xl mx-auto" data-key="cert-subtitle"> Una base solida e un impegno costante nell'aggiornamento per offrire soluzioni sempre all'avanguardia nel campo dei dati e dell'efficienza organizzativa. </p> <div class="flex flex-col items-center space-y-6"> <!-- Google Cert --> <div class="flex flex-col sm:flex-row items-center bg-dark p-6 rounded-lg border border-primary/20 w-full max-w-2xl hover:bg-dark/80 transition-colors"> <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-6"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/120px-Google_2015_logo.svg.png" alt="Google Logo" class="h-16 w-auto rounded bg-white p-1"> </div> <div class="text-center sm:text-left"> <h3 class="text-xl font-semibold text-gray-100 mb-1" data-key="cert1-title">Google Data Analytics Professional Certificate</h3> <p class="text-gray-400 text-sm mb-3" data-key="cert1-issuer">Rilasciato da Google (via Coursera)</p> <p class="text-gray-300 text-sm mb-4" data-key="cert1-desc"> Fondamenta metodologiche nell'intero ciclo di vita dell'analisi dati: raccolta, pulizia, analisi (SQL, R), visualizzazione (es. Tableau), interpretazione e comunicazione degli insight. </p> <a href="https://www.coursera.org/professional-certificates/google-data-analytics" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" data-key="cert-verify"> Verifica Credenziale <i class="fas fa-external-link-alt ml-1 text-xs"></i> </a> </div> </div> <!-- Automazione Skill --> <div class="flex flex-col sm:flex-row items-center bg-dark p-6 rounded-lg border border-secondary/20 w-full max-w-2xl hover:bg-dark/80 transition-colors"> <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-6"> <i class="fas fa-cogs text-green-500 text-4xl w-16 text-center"></i> </div> <div class="text-center sm:text-left"> <h3 class="text-xl font-semibold text-gray-100 mb-1" data-key="skill1-title">Competenze in Automazione Low-Code & Scripting</h3> <p class="text-gray-400 text-sm mb-3" data-key="skill1-issuer">Esperienza Pratica</p> <p class="text-gray-300 text-sm mb-4" data-key="skill1-desc"> Capacità di progettare e implementare workflow automatizzati utilizzando piattaforme low-code/no-code e scripting (Python) per l'integrazione di API e l'automazione di task. </p> </div> </div> </div> </div> </div>
+        </section>
+
+        <!-- Contacts Section -->
+        <section id="contacts" class="section flex items-center">
+            <!-- ... contenuto Contacts section ripristinato ... -->
+              <div class="max-w-4xl mx-auto px-4 w-full"> <div class="glass p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center glitch" data-text="Contattaci"> <span class="highlight uv-text">Mettiamoci in Contatto</span> </h2> <p class="text-lg md:text-xl text-gray-300 mb-10 text-center max-w-2xl mx-auto" data-key="contacts-subtitle"> Pronto a migliorare l'organizzazione e l'efficienza della tua PMI? Raccontaci le tue sfide o richiedi una consulenza preliminare gratuita. </p> <div class="grid md:grid-cols-2 gap-10 items-start"> <!-- Form --> <div> <h3 class="text-2xl font-semibold mb-6 text-yellow-400" data-key="contact-form-title">Invia la tua richiesta</h3> <form id="contact-form" action="#" method="POST"> <div class="mb-5"> <label for="name" class="form-label" data-key="form-name">Nome</label> <input type="text" id="name" name="name" class="form-input bg-dark/80 border-primary/20 focus:ring-primary" placeholder="Il tuo nome" required> </div> <div class="mb-5"> <label for="email" class="form-label" data-key="form-email">Email Aziendale</label> <input type="email" id="email" name="email" class="form-input bg-dark/80 border-primary/20 focus:ring-primary" placeholder="latuaemail@azienda.com" required> </div> <div class="mb-5"> <label for="subject" class="form-label" data-key="form-subject">Oggetto</label> <input type="text" id="subject" name="subject" class="form-input bg-dark/80 border-primary/20 focus:ring-primary" placeholder="Es. Richiesta info automazione..." required> </div> <div class="mb-6"> <label for="message" class="form-label" data-key="form-message">Descrivi la tua esigenza</label> <textarea id="message" name="message" rows="4" class="form-textarea bg-dark/80 border-primary/20 focus:ring-primary" placeholder="Quali processi ottimizzare?" required></textarea> </div> <div> <button type="submit" class="btn btn-primary w-full" data-key="form-submit"> <i class="fas fa-paper-plane"></i> Invia Richiesta </button> </div> <p id="form-status" class="mt-4 text-center text-sm"></p> </form> </div> <!-- Info --> <div class="mt-8 md:mt-0"> <h3 class="text-2xl font-semibold mb-6 text-yellow-400" data-key="contact-info-title">Informazioni Dirette</h3> <div class="space-y-5"> <div class="flex items-start"> <i class="fas fa-envelope text-yellow-400 text-xl mt-1 mr-4"></i> <div> <h4 class="font-semibold text-gray-100" data-key="contact-email-label">Email</h4> <a href="mailto:contatti@osaide.placeholder.com" class="text-gray-300 hover:text-yellow-300 break-all" data-key="contact-email-value">contatti@osaide.placeholder.com</a> </div> </div> <div class="flex items-start"> <i class="fab fa-linkedin text-yellow-400 text-xl mt-1 mr-4"></i> <div> <h4 class="font-semibold text-gray-100" data-key="contact-linkedin-label">LinkedIn</h4> <a href="https://linkedin.com/company/osaide-placeholder" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-yellow-300" data-key="contact-linkedin-value">Profilo OSAIDE (Placeholder)</a> </div> </div> <div class="flex items-start"> <i class="fab fa-github text-yellow-400 text-xl mt-1 mr-4"></i> <div> <h4 class="font-semibold text-gray-100" data-key="contact-github-label">GitHub</h4> <a href="https://github.com/osaide-placeholder" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-yellow-300" data-key="contact-github-value">Repository Progetti (Placeholder)</a> </div> </div> <div class="flex items-start"> <i class="fas fa-map-marker-alt text-yellow-400 text-xl mt-1 mr-4"></i> <div> <h4 class="font-semibold text-gray-100" data-key="contact-location-label">Operatività</h4> <p class="text-gray-300" data-key="contact-location-value">Italia (Remoto & On-site su progetto)</p> </div> </div> </div> </div> </div> </div> </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 text-center bg-gray-900 text-gray-500 text-sm relative z-10">
+        <p data-key="footer-copyright">&copy; <span id="current-year"></span> OSAIDE. Tutti i diritti riservati.</p>
+        <p class="mt-2"><a href="/privacy-placeholder" class="hover:text-yellow-400" data-key="footer-privacy">Privacy Policy</a> | <a href="/cookie-placeholder" class="hover:text-yellow-400" data-key="footer-cookie">Cookie Policy</a></p>
+    </footer>
+
+    <script type="module">
+        // Import Neon Cursor
+        import { neonCursor } from 'https://unpkg.com/threejs-toys@0.0.8/build/threejs-toys.module.cdn.min.js';
+
+        // --- Oggetto Traduzioni (Definire qui l'oggetto completo) ---
+        const translations = { /* ... Oggetto translations completo ... */ }; // Omesso per brevità
+
+        // --- Funzioni Lingua ---
+        // ... (Codice gestione lingua, assicurati che i bottoni EN/IT esistano se li usi) ...
+        const htmlEl = document.documentElement;
+        function setLanguage(lang) { /* ... */ }
+        function updateFormPlaceholders(lang) { /* ... */ }
+        const savedLang = localStorage.getItem('language') || 'it';
+        setLanguage(savedLang);
+
+        // --- Hamburger Menu Logic ---
+        // ... (Codice hamburger menu invariato) ...
+        const menuToggle = document.getElementById('menu-toggle'); const sidebar = document.getElementById('sidebar'); const menuOverlay = document.getElementById('menu-overlay'); const navLinksMobile = sidebar.querySelectorAll('.nav-link'); if (menuToggle && sidebar && menuOverlay) { menuToggle.addEventListener('click', ()=>{ /*...*/ }); menuOverlay.addEventListener('click', ()=>{ /*...*/ }); navLinksMobile.forEach(link => { link.addEventListener('click', ()=>{ /*...*/ }); }); }
+
+
+        // --- Active Nav Link on Scroll ---
+        // ... (Codice IntersectionObserver invariato) ...
+        const sections = document.querySelectorAll('.section'); const navLinks = document.querySelectorAll('.nav-link'); const observerOptions = { root: null, rootMargin: '0px', threshold: 0.4 }; const observer = new IntersectionObserver((entries, observer)=>{ let intersectedSectionId = null; entries.forEach(entry => { if(entry.isIntersecting) intersectedSectionId = entry.target.id; }); if(intersectedSectionId){ const targetHref=`#${intersectedSectionId}`; navLinks.forEach(link => { if(link.getAttribute('href')===targetHref) link.classList.add('active'); else link.classList.remove('active'); }); } }, observerOptions); sections.forEach(section => observer.observe(section));
+
+
+        // --- Copyright Year ---
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // --- Contact Form Handling (Placeholder) ---
+        // ... (Codice gestione form invariato) ...
+         const contactForm = document.getElementById('contact-form'); const formStatus = document.getElementById('form-status'); if (contactForm) { contactForm.addEventListener('submit', (e) => { e.preventDefault(); console.log('Form submitted (placeholder)'); formStatus.textContent = 'Invio in corso...'; formStatus.className = 'mt-4 text-center text-sm text-yellow-400'; setTimeout(() => { formStatus.textContent = 'Messaggio inviato con successo!'; formStatus.className = 'mt-4 text-center text-sm text-green-400'; contactForm.reset(); setTimeout(() => { formStatus.textContent = ''; formStatus.className = 'mt-4 text-center text-sm';}, 3000); }, 1500); }); }
+
+        // --- Inizializzazione DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Inizializza Neon Cursor con parametri modificati
+            try {
+                neonCursor({
+                    el: document.getElementById('app'), // Target body
+                    shaderPoints: 12,   // Ridotto per meno densità
+                    curvePoints: 60,    // Ridotto per meno densità/persistenza
+                    curveLerp: 0.6,     // Aumentato per meno "lag" (più vicino al cursore reale)
+                    radius1: 3,         // Raggio core ridotto
+                    radius2: 15,        // Raggio glow ridotto
+                    velocityTreshold: 15, // Aumentato, la scia appare solo con movimenti più veloci
+                    sleepRadiusX: 150,
+                    sleepRadiusY: 150,
+                    sleepTimeCoefX: 0.0025,
+                    sleepTimeCoefY: 0.0025,
+                     // Potresti provare a forzare un colore con trasparenza qui se la libreria lo supporta
+                     // Esempio: color: new THREE.Color(0xf59e0b).lerp(new THREE.Color(0x000000), 0.5) // Mix con nero? Oppure se supporta alpha:
+                     // color: 'rgba(245, 158, 11, 0.7)' // Non standard per Three.js color, ma la libreria potrebbe gestirlo
+                });
+                console.log("Neon Cursor Initialized with adjusted parameters.");
+            } catch (error) {
+                console.error("Failed to initialize Neon Cursor:", error);
+            }
+
+            // Imposta Home come attivo inizialmente (ritardato)
+            setTimeout(() => {
+                 if (document.querySelectorAll('.nav-link.active').length === 0) {
+                     const homeLink = document.querySelector('.nav-link[href="#home"]');
+                     if (homeLink) homeLink.classList.add('active');
+                 }
+             }, 100);
+        });
+
+    </script>
+
+</body>
+</html>
