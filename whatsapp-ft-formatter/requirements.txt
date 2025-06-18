@@ -1,0 +1,6 @@
+gradio
+google-cloud-storage
+spacy
+sentence-transformers
+jsonschema
+pytest

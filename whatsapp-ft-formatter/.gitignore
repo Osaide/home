@@ -1,0 +1,17 @@
+# Data files
+data/
+
+# Python cache files
+*.pyc
+__pycache__/
+
+# Credentials
+credentials.json
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+*.env
+.env
