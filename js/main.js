@@ -1,7 +1,9 @@
-// Import Neon Cursor
+// js/main.js
+
+// Import Neon Cursor - Remains at top level
 import { neonCursor } from 'https://unpkg.com/threejs-toys@0.0.8/build/threejs-toys.module.cdn.min.js';
 
-// --- Oggetto Traduzioni ---
+// --- Oggetto Traduzioni --- Remains at top level
 const translations = {
     // Navigation
     'nav-home': { it: 'Home', en: 'Home' },
@@ -102,7 +104,7 @@ const translations = {
     'contact-location-label': { it: "Operatività", en: "Operations" },
     'contact-location-value': { it: "Italia (Remoto & On-site su progetto)", en: "Italy (Remote & On-site by project)" },
 
-    // Chatbot Demo Section (New Keys)
+    // Chatbot Demo Section
     'chatbot-demo-subtitle': {
         it: "Prova in anteprima alcune delle capacità di automazione e interazione intelligente. Qui potrai testare chatbot personalizzati sviluppati con Streamlit e integrati con logiche backend (es. n8n) per mostrarti il potenziale per la tua attività.",
         en: "Preview some of the automation and intelligent interaction capabilities. Here you can test custom chatbots developed with Streamlit and integrated with backend logic (e.g., n8n) to show you the potential for your business."
@@ -135,103 +137,155 @@ const translations = {
     'scroll-invite-text': { it: 'Scorri per scoprire di più', en: 'Scroll to discover more' }
 };
 
-// --- Funzioni Lingua ---
-// ... (Codice gestione lingua, assicurati che i bottoni EN/IT esistano se li usi) ...
+// --- Funzioni Lingua --- Define at top level
 const htmlEl = document.documentElement;
-function setLanguage(lang) { /* ... */ }
-function updateFormPlaceholders(lang) { /* ... */ }
-const savedLang = localStorage.getItem('language') || 'it';
-setLanguage(savedLang);
 
-// --- Hamburger Menu Logic ---
-// ... (Codice hamburger menu invariato) ...
-const menuToggle = document.getElementById('menu-toggle'); const sidebar = document.getElementById('sidebar'); const menuOverlay = document.getElementById('menu-overlay'); const navLinksMobile = sidebar.querySelectorAll('.nav-link'); if (menuToggle && sidebar && menuOverlay) { menuToggle.addEventListener('click', ()=>{ /*...*/ }); menuOverlay.addEventListener('click', ()=>{ /*...*/ }); navLinksMobile.forEach(link => { link.addEventListener('click', ()=>{ /*...*/ }); }); }
-
-
-// --- Active Nav Link on Scroll ---
-// ... (Codice hamburger menu invariato) ...
-const menuToggle = document.getElementById('menu-toggle'); const sidebar = document.getElementById('sidebar'); const menuOverlay = document.getElementById('menu-overlay'); const navLinksMobile = sidebar.querySelectorAll('.nav-link'); if (menuToggle && sidebar && menuOverlay) { menuToggle.addEventListener('click', ()=>{ /*...*/ }); menuOverlay.addEventListener('click', ()=>{ /*...*/ }); navLinksMobile.forEach(link => { link.addEventListener('click', ()=>{ /*...*/ }); }); }
-
-
-// --- Active Nav Link on Scroll & Scroll Invitation Logic ---
-const sections = document.querySelectorAll('.section');
-const navLinks = document.querySelectorAll('.nav-link'); // Already exists
-
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.4 // Active when 40% of the section is visible
-};
-
-const sectionObserver = new IntersectionObserver((entries, observer) => {
-    let intersectedSectionId = null;
-    let isLastSectionVisible = false;
-    const scrollInvitation = document.getElementById('scroll-invitation'); // Get ref inside observer or pass it
-    const lastContentSectionId = 'chatbot-demo'; // Defined inside or passed if dynamic
-
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            intersectedSectionId = entry.target.id;
-            if (entry.target.id === lastContentSectionId) {
-                isLastSectionVisible = true;
+function setLanguage(lang) {
+    htmlEl.setAttribute('lang', lang);
+    document.querySelectorAll('[data-key]').forEach(element => {
+        const key = element.getAttribute('data-key');
+        if (translations[key] && translations[key][lang]) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                if (element.placeholder) element.placeholder = translations[key][lang];
+            } else {
+                element.innerHTML = translations[key][lang];
             }
         }
     });
+    updateFormPlaceholders(lang); // Ensure form placeholders are updated if they are part of translations
+    localStorage.setItem('language', lang);
+}
 
-    // Update Nav Links
-    if (intersectedSectionId) {
-        const targetHref = `#${intersectedSectionId}`;
-        navLinks.forEach(link => {
-            if (link.getAttribute('href') === targetHref) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
+function updateFormPlaceholders(lang) {
+    // This function might be redundant if all placeholders are handled by data-key,
+    // but kept if there are specific cases or future needs.
+    // Example:
+    // const namePlaceholder = translations['form-name-placeholder'] ? translations['form-name-placeholder'][lang] : 'Il tuo nome';
+    // const emailPlaceholder = translations['form-email-placeholder'] ? translations['form-email-placeholder'][lang] : 'latuaemail@azienda.com';
+    // if(document.getElementById('name')) document.getElementById('name').placeholder = namePlaceholder;
+    // if(document.getElementById('email')) document.getElementById('email').placeholder = emailPlaceholder;
+}
+
+
+// --- Main DOMContentLoaded Event Listener ---
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Hamburger Menu Logic ---
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const navLinksMobile = sidebar.querySelectorAll('.nav-link');
+
+    if (menuToggle && sidebar && menuOverlay) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-active');
+            menuOverlay.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', sidebar.classList.contains('mobile-active'));
+        });
+        menuOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-active');
+            menuOverlay.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+        });
+        navLinksMobile.forEach(link => {
+            link.addEventListener('click', () => {
+                if (sidebar.classList.contains('mobile-active')) { // Only close if mobile menu is active
+                    sidebar.classList.remove('mobile-active');
+                    menuOverlay.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
         });
     }
 
-    // Update Scroll Invitation Visibility
-    if (scrollInvitation) { // Check if the element exists
-        if (isLastSectionVisible || !intersectedSectionId) {
-            // Hide if on the last section OR if no section is clearly intersected
-            scrollInvitation.classList.remove('opacity-100');
-            scrollInvitation.classList.add('opacity-0');
-        } else {
-            // Show if on any other section
-            scrollInvitation.classList.remove('opacity-0');
-            scrollInvitation.classList.add('opacity-100');
+    // --- Active Nav Link on Scroll & Scroll Invitation Logic ---
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const scrollInvitation = document.getElementById('scroll-invitation');
+    const lastContentSectionId = 'chatbot-demo'; // Or verify this ID is correct for the actual last section
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.4
+    };
+
+    const sectionObserver = new IntersectionObserver((entries, observer) => {
+        let intersectedSectionId = null;
+        let isLastSectionVisible = false;
+
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                intersectedSectionId = entry.target.id;
+                if (entry.target.id === lastContentSectionId) {
+                    isLastSectionVisible = true;
+                }
+            }
+        });
+
+        if (intersectedSectionId) {
+            const targetHref = `#${intersectedSectionId}`;
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === targetHref) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
         }
+
+        if (scrollInvitation) {
+            if (isLastSectionVisible || !intersectedSectionId) {
+                scrollInvitation.classList.remove('opacity-100');
+                scrollInvitation.classList.add('opacity-0');
+            } else {
+                scrollInvitation.classList.remove('opacity-0');
+                scrollInvitation.classList.add('opacity-100');
+            }
+        }
+    }, observerOptions);
+
+    if (sections.length > 0) { // Only observe if sections exist
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
     }
 
-}, observerOptions);
+    // --- Copyright Year ---
+    const currentYearElement = document.getElementById('current-year');
+    if (currentYearElement) {
+        currentYearElement.textContent = new Date().getFullYear();
+    }
 
-sections.forEach(section => {
-    sectionObserver.observe(section);
-});
+    // --- Contact Form Handling (Placeholder) ---
+    const contactForm = document.getElementById('contact-form');
+    const formStatus = document.getElementById('form-status');
+    if (contactForm && formStatus) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('Form submitted (placeholder)');
+            formStatus.textContent = 'Invio in corso...'; // Example: Use translation key if this text needs to be translated
+            formStatus.className = 'mt-4 text-center text-sm text-yellow-400';
+            setTimeout(() => {
+                formStatus.textContent = 'Messaggio inviato con successo!'; // Example: Use translation key
+                formStatus.className = 'mt-4 text-center text-sm text-green-400';
+                contactForm.reset();
+                setTimeout(() => {
+                    formStatus.textContent = '';
+                    formStatus.className = 'mt-4 text-center text-sm';
+                }, 3000);
+            }, 1500);
+        });
+    }
 
-
-// --- Copyright Year ---
-document.getElementById('current-year').textContent = new Date().getFullYear();
-
-// --- Contact Form Handling (Placeholder) ---
-// ... (Codice gestione form invariato) ...
- const contactForm = document.getElementById('contact-form'); const formStatus = document.getElementById('form-status'); if (contactForm) { contactForm.addEventListener('submit', (e) => { e.preventDefault(); console.log('Form submitted (placeholder)'); formStatus.textContent = 'Invio in corso...'; formStatus.className = 'mt-4 text-center text-sm text-yellow-400'; setTimeout(() => { formStatus.textContent = 'Messaggio inviato con successo!'; formStatus.className = 'mt-4 text-center text-sm text-green-400'; contactForm.reset(); setTimeout(() => { formStatus.textContent = ''; formStatus.className = 'mt-4 text-center text-sm';}, 3000); }, 1500); }); }
-
-// --- Inizializzazione DOMContentLoaded ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Note: scrollInvitation and lastContentSectionId are defined inside the observer for now.
-    // If they were needed here, they'd be defined here or passed.
-    // The sectionObserver is already set up above and will work once DOM is loaded and sections are available.
-
-    // Inizializza Neon Cursor con parametri modificati
+    // --- Inizializza Neon Cursor ---
     try {
         neonCursor({
-            el: document.getElementById('cursor-container'), // MODIFIED: Target the new container
-            shaderPoints: 12,   // Ridotto per meno densità
-            curvePoints: 60,    // Ridotto per meno densità/persistenza
-            curveLerp: 0.6,     // Aumentato per meno "lag" (più vicino al cursore reale)
-            radius1: 3,         // Raggio core ridotto
-            radius2: 15,        // Raggio glow ridotto
+            el: document.getElementById('cursor-container'),
+            shaderPoints: 12,
+            curvePoints: 60,
+            curveLerp: 0.6,
+            radius1: 3,
+            radius2: 15,
             velocityTreshold: 15,
             sleepRadiusX: 150,
             sleepRadiusY: 150,
@@ -243,16 +297,38 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Failed to initialize Neon Cursor on #cursor-container:", error);
     }
 
-    // Imposta Home come attivo inizialmente (ritardato)
-    setTimeout(() => {
-         if (document.querySelectorAll('.nav-link.active').length === 0) {
-             const homeLink = document.querySelector('.nav-link[href="#home"]');
-             if (homeLink) homeLink.classList.add('active');
+    // --- Initial Active Nav Link & Language Setup ---
+    // Imposta Home come attivo inizialmente (ritardato) se nessuna sezione è già attiva
+     setTimeout(() => {
+         const isActiveLinkPresent = document.querySelector('.nav-link.active');
+         if (!isActiveLinkPresent && sections.length > 0 && window.location.hash === '' || window.location.hash === '#home' || !document.querySelector(window.location.hash)) {
+            // Check if first section is visible (or home is targeted)
+            const firstSection = document.querySelector('.section');
+            if (firstSection) {
+                 const firstSectionTop = firstSection.getBoundingClientRect().top;
+                 const firstSectionBottom = firstSection.getBoundingClientRect().bottom;
+                 const viewportHeight = window.innerHeight;
+                 // Check if at least a part of the first section is visible
+                 if ( (firstSectionTop < viewportHeight && firstSectionBottom > 0) || window.location.hash === '#home' ) {
+                    const homeLink = document.querySelector('.nav-link[href="#home"]');
+                    if (homeLink) {
+                        navLinks.forEach(link => link.classList.remove('active')); // Clear others
+                        homeLink.classList.add('active');
+                    }
+                 }
+            }
+         } else if (isActiveLinkPresent && window.location.hash && document.querySelector(window.location.hash) ) {
+            // If a hash is present and an active link is already set by observer, ensure it matches the hash
+            // Or if observer hasn't run, set based on hash
+            const currentHashLink = document.querySelector(`.nav-link[href="${window.location.hash}"]`);
+            if(currentHashLink && !currentHashLink.classList.contains('active')) {
+                navLinks.forEach(link => link.classList.remove('active'));
+                currentHashLink.classList.add('active');
+            }
          }
-     }, 100);
+     }, 150); // Increased timeout slightly for observer to potentially run first
 
-            // Initial call to setLanguage to apply text to scroll invitation if page loads in non-default language
-            // The setLanguage function should iterate over all elements with data-key
-            const currentSavedLang = localStorage.getItem('language') || 'it'; // Assuming 'it' is default
-            setLanguage(currentSavedLang); // This should also update the scroll invitation text
+    // Initial call to setLanguage
+    const currentSavedLang = localStorage.getItem('language') || 'it';
+    setLanguage(currentSavedLang);
 });
