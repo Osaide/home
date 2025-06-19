@@ -129,7 +129,10 @@ const translations = {
     // Footer
     'footer-copyright': { it: "&copy; <span id=\"current-year\"></span> OSAIDE. Tutti i diritti riservati.", en: "&copy; <span id=\"current-year\"></span> OSAIDE. All rights reserved." },
     'footer-privacy': { it: "Privacy Policy", en: "Privacy Policy" },
-    'footer-cookie': { it: "Cookie Policy", en: "Cookie Policy" }
+    'footer-cookie': { it: "Cookie Policy", en: "Cookie Policy" },
+
+    // Scroll Invitation
+    'scroll-invite-text': { it: 'Scorri per scoprire di più', en: 'Scroll to discover more' }
 };
 
 // --- Funzioni Lingua ---
@@ -146,8 +149,65 @@ const menuToggle = document.getElementById('menu-toggle'); const sidebar = docum
 
 
 // --- Active Nav Link on Scroll ---
-// ... (Codice IntersectionObserver invariato) ...
-const sections = document.querySelectorAll('.section'); const navLinks = document.querySelectorAll('.nav-link'); const observerOptions = { root: null, rootMargin: '0px', threshold: 0.4 }; const observer = new IntersectionObserver((entries, observer)=>{ let intersectedSectionId = null; entries.forEach(entry => { if(entry.isIntersecting) intersectedSectionId = entry.target.id; }); if(intersectedSectionId){ const targetHref=`#${intersectedSectionId}`; navLinks.forEach(link => { if(link.getAttribute('href')===targetHref) link.classList.add('active'); else link.classList.remove('active'); }); } }, observerOptions); sections.forEach(section => observer.observe(section));
+// ... (Codice hamburger menu invariato) ...
+const menuToggle = document.getElementById('menu-toggle'); const sidebar = document.getElementById('sidebar'); const menuOverlay = document.getElementById('menu-overlay'); const navLinksMobile = sidebar.querySelectorAll('.nav-link'); if (menuToggle && sidebar && menuOverlay) { menuToggle.addEventListener('click', ()=>{ /*...*/ }); menuOverlay.addEventListener('click', ()=>{ /*...*/ }); navLinksMobile.forEach(link => { link.addEventListener('click', ()=>{ /*...*/ }); }); }
+
+
+// --- Active Nav Link on Scroll & Scroll Invitation Logic ---
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link'); // Already exists
+
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.4 // Active when 40% of the section is visible
+};
+
+const sectionObserver = new IntersectionObserver((entries, observer) => {
+    let intersectedSectionId = null;
+    let isLastSectionVisible = false;
+    const scrollInvitation = document.getElementById('scroll-invitation'); // Get ref inside observer or pass it
+    const lastContentSectionId = 'chatbot-demo'; // Defined inside or passed if dynamic
+
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            intersectedSectionId = entry.target.id;
+            if (entry.target.id === lastContentSectionId) {
+                isLastSectionVisible = true;
+            }
+        }
+    });
+
+    // Update Nav Links
+    if (intersectedSectionId) {
+        const targetHref = `#${intersectedSectionId}`;
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === targetHref) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
+    // Update Scroll Invitation Visibility
+    if (scrollInvitation) { // Check if the element exists
+        if (isLastSectionVisible || !intersectedSectionId) {
+            // Hide if on the last section OR if no section is clearly intersected
+            scrollInvitation.classList.remove('opacity-100');
+            scrollInvitation.classList.add('opacity-0');
+        } else {
+            // Show if on any other section
+            scrollInvitation.classList.remove('opacity-0');
+            scrollInvitation.classList.add('opacity-100');
+        }
+    }
+
+}, observerOptions);
+
+sections.forEach(section => {
+    sectionObserver.observe(section);
+});
 
 
 // --- Copyright Year ---
@@ -159,6 +219,9 @@ document.getElementById('current-year').textContent = new Date().getFullYear();
 
 // --- Inizializzazione DOMContentLoaded ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Note: scrollInvitation and lastContentSectionId are defined inside the observer for now.
+    // If they were needed here, they'd be defined here or passed.
+    // The sectionObserver is already set up above and will work once DOM is loaded and sections are available.
 
     // Inizializza Neon Cursor con parametri modificati
     try {
@@ -187,4 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
              if (homeLink) homeLink.classList.add('active');
          }
      }, 100);
+
+            // Initial call to setLanguage to apply text to scroll invitation if page loads in non-default language
+            // The setLanguage function should iterate over all elements with data-key
+            const currentSavedLang = localStorage.getItem('language') || 'it'; // Assuming 'it' is default
+            setLanguage(currentSavedLang); // This should also update the scroll invitation text
 });
