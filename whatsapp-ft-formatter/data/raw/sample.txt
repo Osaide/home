@@ -1,1 +1,11 @@
-Sample chat data
+[01/01/2024, 10:00:00] User1: Hello there! This is the first message.
+How are you doing today?
+[01/01/2024, 10:01:30] User2: I'm doing great, User1! Thanks for asking.
+This is a reply.
+[01/01/2024, 10:02:00] User1: Glad to hear it.
+[01/01/2024, 10:08:00] User1: I have another question. This is after a timeout.
+[01/01/2024, 10:08:30] User3: And I am User3, joining the conversation.
+What is 10 plus 10?
+[01/01/2024, 10:09:00] User2: The answer is 20.
+[01/01/2024, 10:09:30] User3: Thanks! Goodbye for now.
+It's December 25th.
