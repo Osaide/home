@@ -106,15 +106,25 @@
 }
 
 /* === Stili per il Canvas di Neon Cursor === */
-#cursor-container > canvas { /* MODIFIED: Selector changed */
+#app > canvas { /* MODIFIED: Selector changed to target canvas within #app (body) */
     display: block;
-    /* position, top, left, width, height, z-index are now handled by #cursor-container itself */
-    /* pointer-events: none; is also on the container */
-    /* The canvas itself might just need to fill its parent if the library doesn't force its own dimensions/positioning */
-    /* However, the library likely creates a canvas that fills its 'el' based on el's dimensions. */
-    /* Explicitly setting width/height 100% for the canvas ensures it fills the container. */
-    width: 100%;
-    height: 100%;
-    /* The library might also set its own inline styles for position/dimensions on the canvas. */
-    /* The critical part is that #cursor-container is correctly sized and positioned. */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* CRUCIAL: Places canvas behind all other body content */
+    pointer-events: none; /* CRUCIAL: Canvas itself does not capture mouse events */
+}
+
+.poi-highlight {
+    /* Using a prominent box-shadow for highlighting. Adjust values as needed. */
+    box-shadow: 0 0 20px 8px rgba(var(--clr-neon-rgb), 0.6), /* Outer glow */
+                0 0 10px 4px rgba(var(--clr-neon-rgb), 0.8), /* Inner stronger glow */
+                inset 0 0 5px 2px rgba(var(--clr-neon-rgb), 0.3); /* Subtle inset glow */
+    border-radius: inherit; /* Inherit border-radius from the element itself for better fit */
+    transition: box-shadow 0.4s ease-in-out;
+    /* Adding a slight scale to make it pop a bit, optional */
+    /* transform: scale(1.02); */
+    /* Ensure this doesn't break layout if used. For now, focus on box-shadow. */
 }

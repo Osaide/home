@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Inizializza Neon Cursor ---
     try {
         neonCursor({
-            el: document.getElementById('cursor-container'),
+            el: document.getElementById('app'), // MODIFIED: Target the body #app element
             shaderPoints: 12,
             curvePoints: 60,
             curveLerp: 0.6,
@@ -292,9 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sleepTimeCoefX: 0.0025,
             sleepTimeCoefY: 0.0025,
         });
-        console.log("Neon Cursor Initialized with adjusted parameters on #cursor-container.");
+        console.log("Neon Cursor Initialized on #app (body) for background mouse-following effect.");
     } catch (error) {
-        console.error("Failed to initialize Neon Cursor on #cursor-container:", error);
+        console.error("Failed to initialize Neon Cursor on #app:", error);
     }
 
     // --- Initial Active Nav Link & Language Setup ---
@@ -331,4 +331,52 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial call to setLanguage
     const currentSavedLang = localStorage.getItem('language') || 'it';
     setLanguage(currentSavedLang);
+
+    // --- POI Highlighting Logic ---
+    const poiSelectors = [
+        '#mission .glass',
+        '#vision-quote-box',
+        '#services .glass',
+        '.portfolio-card',
+        '#certifications .glass',
+        '.chatbot-demo-card',
+        '#name', '#email', '#subject', '#message'
+    ];
+
+    const poiElements = [];
+    poiSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => poiElements.push(el));
+    });
+
+    const highlightedPois = new Set();
+
+    const poiObserverOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5 // POI is 50% visible
+    };
+
+    const poiObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (!highlightedPois.has(entry.target)) {
+                    entry.target.classList.add('poi-highlight');
+                    highlightedPois.add(entry.target);
+                    // console.log('Highlighting:', entry.target);
+
+                    setTimeout(() => {
+                        entry.target.classList.remove('poi-highlight');
+                        highlightedPois.delete(entry.target);
+                        // console.log('Removing highlight:', entry.target);
+                    }, 5000); // 5 seconds
+                }
+            }
+        });
+    }, poiObserverOptions);
+
+    if (poiElements.length > 0) {
+        poiElements.forEach(el => {
+            poiObserver.observe(el);
+        });
+    }
 });

@@ -37,7 +37,6 @@
     </style>
 </head>
 <body id="app">
-    <div id="cursor-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 5;"></div>
     <button id="menu-toggle" aria-label="Apri menu">
         <i class="fas fa-bars"></i>
     </button>
@@ -87,7 +86,7 @@
         <!-- Vision Section -->
         <section id="vision" class="section p-4 sm:p-8 md:p-12 lg:p-16 flex items-center">
             <!-- ... contenuto Vision section ripristinato ... -->
-             <div class="max-w-5xl mx-auto px-4"> <div class="glass p-6 sm:p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center glitch" data-text="Visione"> <span class="highlight uv-text">Visione</span> </h2> <div class="grid md:grid-cols-2 gap-8 items-center"> <div class="order-2 md:order-1 relative h-64 md:h-80 bg-gradient-to-br from-dark to-darker rounded-xl overflow-hidden border border-yellow-500 border-opacity-20 flex items-center justify-center p-4"> <i class="fas fa-brain text-yellow-500 text-8xl opacity-10"></i> <p class="absolute text-center text-lg text-gray-300 p-4 bg-black bg-opacity-30 rounded" data-key="vision-image-text">Organizzazioni potenziate dall'intelligenza dei dati</p> </div> <div class="order-1 md:order-2"> <p class="text-lg text-gray-300 mb-6" data-key="vision-text-1"> Un futuro in cui le PMI competono alla pari grazie a <span class="highlight">organizzazioni agili</span> e <span class="highlight">decisioni data-driven</span>, supportate da sistemi intelligenti che ottimizzano risorse e anticipano le esigenze del mercato. </p> <p class="text-lg text-gray-300 mb-6" data-key="vision-text-2"> Creare un ecosistema di <span class="highlight">soluzioni accessibili</span> e integrate che rendano l'automazione e l'analisi avanzata una leva strategica quotidiana, liberando potenziale umano per compiti a maggior valore aggiunto. </p> <div class="bg-dark p-4 rounded-lg inline-block border border-primary/30 mt-4"> <p class="text-yellow-400 font-medium italic" data-key="vision-quote"> "L'efficienza non è fare di più, ma fare meglio ciò che conta davvero, guidati dai dati." </p> </div> </div> </div> </div> </div>
+             <div class="max-w-5xl mx-auto px-4"> <div class="glass p-6 sm:p-8 md:p-10 rounded-xl uv-shadow"> <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center glitch" data-text="Visione"> <span class="highlight uv-text">Visione</span> </h2> <div class="grid md:grid-cols-2 gap-8 items-center"> <div class="order-2 md:order-1 relative h-64 md:h-80 bg-gradient-to-br from-dark to-darker rounded-xl overflow-hidden border border-yellow-500 border-opacity-20 flex items-center justify-center p-4"> <i class="fas fa-brain text-yellow-500 text-8xl opacity-10"></i> <p class="absolute text-center text-lg text-gray-300 p-4 bg-black bg-opacity-30 rounded" data-key="vision-image-text">Organizzazioni potenziate dall'intelligenza dei dati</p> </div> <div class="order-1 md:order-2"> <p class="text-lg text-gray-300 mb-6" data-key="vision-text-1"> Un futuro in cui le PMI competono alla pari grazie a <span class="highlight">organizzazioni agili</span> e <span class="highlight">decisioni data-driven</span>, supportate da sistemi intelligenti che ottimizzano risorse e anticipano le esigenze del mercato. </p> <p class="text-lg text-gray-300 mb-6" data-key="vision-text-2"> Creare un ecosistema di <span class="highlight">soluzioni accessibili</span> e integrate che rendano l'automazione e l'analisi avanzata una leva strategica quotidiana, liberando potenziale umano per compiti a maggior valore aggiunto. </p> <div id="vision-quote-box" class="bg-dark p-4 rounded-lg inline-block border border-primary/30 mt-4"> <p class="text-yellow-400 font-medium italic" data-key="vision-quote"> "L'efficienza non è fare di più, ma fare meglio ciò che conta davvero, guidati dai dati." </p> </div> </div> </div> </div> </div>
         </section>
 
         <!-- Services Section -->
@@ -128,7 +127,7 @@
 
                     <div class="grid md:grid-cols-2 gap-8">
                         <!-- Chatbot Demo 1 -->
-                        <div class="bg-dark p-6 rounded-lg border border-primary/20">
+                        <div class="chatbot-demo-card bg-dark p-6 rounded-lg border border-primary/20">
                             <h3 class="text-xl font-bold text-gray-100 mb-3" data-key="chatbot-demo1-title">Demo 1: Assistente Virtuale FAQ</h3>
                             <p class="text-gray-400 text-sm mb-4" data-key="chatbot-demo1-desc">
                                 Un esempio di chatbot addestrato a rispondere alle domande frequenti su un prodotto o servizio. Utile per alleggerire il carico del customer service e fornire risposte immediate h24.
@@ -149,7 +148,7 @@
                         </div>
 
                         <!-- Chatbot Demo 2 -->
-                        <div class="bg-dark p-6 rounded-lg border border-secondary/20">
+                        <div class="chatbot-demo-card bg-dark p-6 rounded-lg border border-secondary/20">
                             <h3 class="text-xl font-bold text-gray-100 mb-3" data-key="chatbot-demo2-title">Demo 2: Raccoglitore Lead Qualificato</h3>
                             <p class="text-gray-400 text-sm mb-4" data-key="chatbot-demo2-desc">
                                 Questo chatbot è progettato per interagire con i visitatori del sito, qualificare i lead ponendo domande specifiche e, se opportuno, raccogliere informazioni di contatto per un follow-up.
