@@ -1,202 +1,164 @@
 # src/parser.py
-
 import re
+import datetime # Corrected import from 'import re, datetime' to separate lines
 from typing import List, Dict, Optional
-from datetime import datetime
+import os # Added for __main__ to construct path to sample.txt
 
-# Regex to capture WhatsApp messages.
-# It looks for a date, time, author, and message.
-# Handles different date formats (dd/mm/yyyy and mm/dd/yyyy) and author names.
-# Assumes author names do not contain ':' except for the one separating author from message.
-# It also handles multi-line messages.
-# Example: [DD/MM/YYYY, HH:MM:SS] Author Name: Message text
-# Example: MM/DD/YYYY, HH:MM - Author Name: Message text (older format, less common for exports)
+# Regex pattern from the new plan
+# PATTERN = r"\[(\d{1,2}/\d{1,2}/\d{2,4}), (\d{1,2}:\d{2}(:\d{2})?)\] (.*?): (.*)" # Original from plan
+# Issues with original:
+# 1. Date part \d{2,4} for year can be problematic if year is YY. Using \d{2,4} is fine.
+# 2. Time part (\d{1,2}:\d{2}(:\d{2})?) - optional seconds group is not named and might cause issues in m.groups().
+#    It's better to make the seconds part of the main time group or handle it carefully.
+# 3. Author (.*?) non-greedy might be too broad if names can have colons.
+#    The previous parser's [^:]+ was more robust for author.
+# 4. Message (.*) is greedy and fine.
 
-# More robust regex:
-# - Allows for optional seconds.
-# - Allows for AM/PM in time.
-# - Author can contain spaces.
-# - Message can be multi-line.
-WHATSAPP_MESSAGE_REGEX = re.compile(
-    r"^(?P<timestamp_bracket>\[?(?P<date>\d{1,2}/\d{1,2}/\d{2,4}),\s*(?P<time>\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)]?\s*)?"  # Optional timestamp bracket and content
-    r"(?P<author>[^:]+):\s"  # Author: anything up to the first colon-space
-    r"(?P<text>.+)",  # Message: the rest of the line
-    re.MULTILINE # Ensure ^ matches start of each line for messages that might not have timestamps
-)
+# Revised PATTERN based on new plan's structure but with slight robustness improvements:
+# Handles [DD/MM/YYYY, HH:MM:SS] Author: Message
+# Or [DD/MM/YY, HH:MM] Author: Message
+PATTERN_STRING = r"\[(\d{1,2}/\d{1,2}/\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?)\]\s*([^:]+):\s*(.*)"
+# Groups: 1:Date, 2:Time (with optional :SS), 3:Author, 4:Text
+# Example: [01/01/2023, 10:00:00] User1: Hello
+# Example: [01/01/23, 10:00] User2: Hi
 
-# Regex for lines that are continuations of a previous message (don't have timestamp/author)
-MESSAGE_CONTINUATION_REGEX = re.compile(
-    r"^(?!(\[?\d{1,2}/\d{1,2}/\d{2,4},\s*\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?]?\s*[^:]+:\s)).+"
-)
+# Let's try to make the timestamp parsing more flexible for date part (YY or YYYY)
+# And time part (HH:MM or HH:MM:SS)
+DATE_FORMATS_TO_TRY = [
+    "%d/%m/%Y %H:%M:%S", # DD/MM/YYYY HH:MM:SS
+    "%d/%m/%y %H:%M:%S", # DD/MM/YY HH:MM:SS
+    "%d/%m/%Y %H:%M",    # DD/MM/YYYY HH:MM
+    "%d/%m/%y %H:%M",    # DD/MM/YY HH:MM
+]
+
+# For lines that are continuations of a previous message (don't have timestamp/author)
+# This regex negative lookahead asserts that the line does NOT start with a timestamp pattern.
+MESSAGE_CONTINUATION_REGEX_STRING = r"^(?!(?:\[\d{1,2}/\d{1,2}/\d{2,4},\s*\d{1,2}:\d{2}(?::\d{2})?\]\s*[^:]+:\s*)).+"
+MESSAGE_CONTINUATION_REGEX = re.compile(MESSAGE_CONTINUATION_REGEX_STRING)
+PATTERN = re.compile(PATTERN_STRING)
 
 
-def parse_whatsapp_date(date_str: str, time_str: str) -> Optional[datetime]:
-    """
-    Parses date and time strings into a datetime object.
-    Tries common WhatsApp date formats.
-    """
+def parse_datetime_flexible(date_str: str, time_str: str) -> Optional[datetime.datetime]:
+    """Attempts to parse date and time using a list of format strings."""
     full_datetime_str = f"{date_str} {time_str}"
-    formats_to_try = [
-        "%d/%m/%Y %H:%M:%S",  # DD/MM/YYYY HH:MM:SS
-        "%d/%m/%y %H:%M:%S",  # DD/MM/YY HH:MM:SS
-        "%m/%d/%Y %H:%M:%S",  # MM/DD/YYYY HH:MM:SS (less common for exports)
-        "%m/%d/%y %H:%M:%S",  # MM/DD/YY HH:MM:SS
-        "%d/%m/%Y %H:%M",     # DD/MM/YYYY HH:MM (if seconds are missing)
-        "%d/%m/%y %H:%M",     # DD/MM/YY HH:MM
-        "%m/%d/%Y %H:%M",     # MM/DD/YYYY HH:MM
-        "%m/%d/%y %H:%M",     # MM/DD/YY HH:MM
-        # Potentially formats with AM/PM if your regex captures it and it's needed
-        "%d/%m/%Y %I:%M:%S %p", # DD/MM/YYYY HH:MM:SS AM/PM
-        "%d/%m/%y %I:%M:%S %p",
-        "%d/%m/%Y %I:%M %p",    # DD/MM/YYYY HH:MM AM/PM
-        "%d/%m/%y %I:%M %p",
-    ]
-    for fmt in formats_to_try:
+    for fmt in DATE_FORMATS_TO_TRY:
         try:
-            return datetime.strptime(full_datetime_str, fmt)
+            return datetime.datetime.strptime(full_datetime_str, fmt)
         except ValueError:
             continue
-    print(f"Warning: Could not parse date-time: {full_datetime_str} with known formats.")
+    # print(f"Warning: Could not parse date-time: '{full_datetime_str}' with known formats.")
     return None
 
 def parse_txt(file_paths: List[str]) -> List[Dict]:
     """
-    Parses raw TXT chat files into a list of message dictionaries.
-
-    Args:
-        file_paths (List[str]): List of paths to .txt chat files.
-
-    Returns:
-        List[Dict{"timestamp": datetime, "author": str, "text": str}]:
-        A list of dictionaries, each representing a message, sorted chronologically.
+    Parses raw TXT chat files (as specified by the new plan) into a list of message dictionaries.
+    Handles multi-line messages by appending to the previous message if a line does not start with a timestamp.
     """
-    all_messages = []
-    last_message_data = None
+    messages = []
+    current_file_messages = [] # To store messages for the current file before extending global list
+    last_message_data = None   # To handle multi-line messages
 
-    for file_path in file_paths:
+    for path in file_paths:
+        print(f"Parsing file: {path}")
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                print(f"Parsing file: {file_path}")
-                current_file_messages = []
-                for line_number, line in enumerate(f, 1):
-                    line = line.strip()
-                    if not line:  # Skip empty lines
+            with open(path, 'r', encoding='utf-8') as f:
+                for line_number, line_content in enumerate(f, 1):
+                    line_content = line_content.strip()
+                    if not line_content: # Skip empty lines
                         continue
 
-                    match = WHATSAPP_MESSAGE_REGEX.match(line)
+                    match = PATTERN.match(line_content)
                     if match:
-                        data = match.groupdict()
-                        timestamp_str = data.get("timestamp_bracket")
-                        author = data['author'].strip()
-                        text = data['text'].strip()
+                        date, time, author, text = match.groups()
+                        # ts = datetime.datetime.strptime(f"{date} {time}", "%d/%m/%Y %H:%M") # Original plan's parsing
+                        ts = parse_datetime_flexible(date, time) # More flexible parsing
 
-                        dt_object = None
-                        if timestamp_str: # Timestamp is present
-                            dt_object = parse_whatsapp_date(data['date'], data['time'])
-                            if dt_object is None:
-                                # If parsing fails, store raw timestamp or skip
-                                print(f"Line {line_number}: Could not parse timestamp for message by {author}")
-                                # Decide: skip message, or add with raw/None timestamp?
-                                # For now, we'll add with None timestamp if parsing fails but regex matched structure
+                        if ts is None:
+                            print(f"Warning: Line {line_number} in {path}: Timestamp '{date} {time}' by '{author}' could not be parsed. Skipping message.")
+                            # last_message_data = None # Reset last message context
+                            # continue # Or append with None timestamp if desired
 
-                        message_data = {"timestamp": dt_object, "author": author, "text": text, "raw_timestamp": timestamp_str or ""}
+                        message_data = {"timestamp": ts, "author": author.strip(), "text": text.strip()}
                         current_file_messages.append(message_data)
-                        last_message_data = message_data
+                        last_message_data = message_data # For multi-line handling
 
-                    elif last_message_data and MESSAGE_CONTINUATION_REGEX.match(line):
+                    elif last_message_data and MESSAGE_CONTINUATION_REGEX.match(line_content):
                         # This line is a continuation of the previous message
-                        last_message_data["text"] += "\n" + line # Using \n to represent newline in text
+                        last_message_data["text"] += "\n" + line_content
+
                     else:
                         # Line doesn't match new message format or continuation
-                        # Could be a system message (e.g., "You created this group") or media omission
-                        # For now, we'll try to append it to the last known message if it exists,
-                        # or log it as an unparsed line.
-                        if last_message_data:
-                             # Prepending a special marker to indicate it's a system/unstructured line
-                            last_message_data["text"] += "\n[UNPARSED_LINE] " + line
-                        else:
-                            print(f"Line {line_number}: Unparsed line (doesn't match message format or continuation): '{line[:100]}...'")
+                        # Could be a system message, media omission, or other unhandled format
+                        # print(f"Info: Line {line_number} in {path}: Unparsed line (no timestamp, not a continuation): '{line_content[:100]}...'")
+                        if last_message_data: # If there's a previous message, append as part of its text
+                            last_message_data["text"] += "\n[SYSTEM_OR_UNPARSED] " + line_content
+                        else: # No context, log as an orphaned line (or create a special message type)
+                            print(f"Info: Line {line_number} in {path}: Orphaned unparsed line: '{line_content[:100]}...'")
+                        # last_message_data = None # Reset context if it's an unparsed line interrupting flow
 
-                all_messages.extend(current_file_messages)
-                last_message_data = None # Reset for next file
-
+            messages.extend(current_file_messages)
+            current_file_messages = [] # Reset for next file
+            last_message_data = None   # Reset for next file
         except FileNotFoundError:
-            print(f"Error: File not found at {file_path}")
+            print(f"Error: File not found at {path}")
         except Exception as e:
-            print(f"Error parsing file {file_path}: {e}")
+            print(f"Error parsing file {path}: {e}")
 
-    # Sort messages by timestamp, handling None timestamps by placing them earlier or later
-    # Here, messages without a valid timestamp are placed at the beginning.
-    # You might want a different strategy (e.g. attempt to infer based on order in file).
-    all_messages.sort(key=lambda x: x["timestamp"] if x["timestamp"] else datetime.min)
+    # Filter out messages that ended up with None timestamp if we decided to include them temporarily
+    messages = [m for m in messages if m["timestamp"] is not None]
 
-    # Clean up messages that might be empty after processing (e.g. only a timestamp)
-    # And ensure all required keys are present, even if text is empty.
-    processed_messages = []
-    for msg in all_messages:
-        if msg.get("text") or (msg.get("author") and msg.get("timestamp")): # Keep if text or if it's a structured entry
-            processed_messages.append({
-                "timestamp": msg["timestamp"],
-                "author": msg["author"],
-                "text": msg.get("text", "").strip(), # Ensure text is not None
-                "raw_timestamp": msg.get("raw_timestamp", "")
-            })
+    # Sort all messages from all files by timestamp
+    messages.sort(key=lambda x: x["timestamp"])
 
-    print(f"Successfully parsed {len(processed_messages)} messages from {len(file_paths)} file(s).")
-    return processed_messages
+    print(f"Successfully parsed {len(messages)} messages from {len(file_paths)} file(s).")
+    return messages
 
 if __name__ == '__main__':
     # Create dummy chat files for testing
     dummy_chat_content_1 = """
 [01/01/2023, 10:00:00] User1: Hello!
-This is a multi-line message.
-[01/01/2023, 10:00:30] User2: Hi User1.
-How are you?
-[01/01/2023, 10:01:00] User1: I'm fine, thanks!
-And you?
-This message has a timestamp.
-Another line for the same message.
-This is a system message that will be appended.
-[02/02/2023, 11:00:00] User3: A message from another user.
+This is a multi-line message from User1.
+It continues here.
+[01/01/2023, 10:00:30] User2: Hi User1. How are you?
+I am fine.
+[01/01/23, 10:01] User1: I'm fine, thanks! And you?
+This message has a YY date and no seconds.
+[01/01/2023, 10:02:00] System: This is a system message that might be missed or appended.
+[01/01/2023, 10:03:00] User1: Another message.
     """
-    dummy_chat_content_2 = """
-1/3/23, 14:30 - TestUser: Message with a different date format and no seconds.
-[03/03/2023, 15:00:15] AnotherUser: Just a simple message.
-This line has no timestamp and should be part of AnotherUser's message.
-[INVALID_DATE, 10:00:00] UserErr: This message has an invalid date.
-User With Colon: In Name: This is a tricky one.
-[03/03/2023, 15:01:00] AnotherUser: Message after the one with no timestamp.
-    """
-
-    dummy_file_1 = "dummy_chat_1.txt"
-    dummy_file_2 = "dummy_chat_2.txt"
-
+    dummy_file_1 = "dummy_chat_parser_test_1.txt"
     with open(dummy_file_1, "w", encoding="utf-8") as f:
         f.write(dummy_chat_content_1)
-    with open(dummy_file_2, "w", encoding="utf-8") as f:
-        f.write(dummy_chat_content_2)
 
-    test_file_paths = [dummy_file_1, dummy_file_2]
+    # Sample from data/raw/sample.txt if it exists and has content
+    sample_file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw', 'sample.txt')
+    if not os.path.exists(sample_file_path):
+         with open(sample_file_path, "w", encoding="utf-8") as f:
+            f.write("[01/01/2024, 12:00] SampleUser: This is a sample message for testing from sample.txt.\nAnother line for sample user.")
 
-    print("Testing parser.py...")
+
+    test_file_paths = [dummy_file_1, sample_file_path]
+
+    print("--- Testing src/parser.py ---")
     parsed_messages = parse_txt(test_file_paths)
 
     if parsed_messages:
         print(f"\n--- Parsed Messages ({len(parsed_messages)}) ---")
         for i, msg in enumerate(parsed_messages):
-            ts = msg['timestamp'].strftime('%Y-%m-%d %H:%M:%S') if msg['timestamp'] else "No Timestamp"
-            print(f"{i+1}. Timestamp: {ts}, Author: '{msg['author']}', Text: '{msg['text'][:60]}...'")
+            ts_str = msg['timestamp'].strftime('%Y-%m-%d %H:%M:%S') if msg['timestamp'] else "Invalid Timestamp"
+            print(f"{i+1}. Timestamp: {ts_str}, Author: '{msg['author']}', Text: '{msg['text'][:60].replace('\n', ' ')}...'")
 
-        # Check chronological order (basic check)
         timestamps = [m['timestamp'] for m in parsed_messages if m['timestamp']]
-        if timestamps == sorted(timestamps):
-            print("\nMessages are sorted chronologically.")
+        if not timestamps or timestamps == sorted(timestamps):
+            print("\nMessages are sorted chronologically (or no valid timestamps).")
         else:
-            print("\nWarning: Messages may not be perfectly sorted chronologically.")
-            # for ts_obj in timestamps: print(ts_obj)
+            print("\nError: Messages are NOT sorted chronologically.")
+    else:
+        print("No messages were parsed.")
 
+    # Clean up dummy file
+    if os.path.exists(dummy_file_1):
+        os.remove(dummy_file_1)
+    # Do not remove sample.txt as it's part of the structure
 
-    # Clean up dummy files
-    os.remove(dummy_file_1)
-    os.remove(dummy_file_2)
-    print("\nFinished testing parser.py.")
+    print("--- Finished testing src/parser.py ---")

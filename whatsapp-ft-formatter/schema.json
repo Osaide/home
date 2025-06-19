@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WhatsApp Chat Processed Dialog",
+  "description": "Schema for a processed WhatsApp dialog including messages, summary, and extracted entities.",
+  "type": "object",
+  "properties": {
+    "dialog_id": {
+      "type": "integer",
+      "description": "Unique identifier for the dialog session."
+    },
+    "messages": {
+      "type": "array",
+      "description": "List of messages within the dialog.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "Role of the message sender (e.g., client, agent, participant)."
+          },
+          "text": {
+            "type": "string",
+            "description": "The actual text content of the message."
+          },
+          "intent": {
+            "type": "string",
+            "description": "Detected intent from the message text (optional)."
+          },
+          "entities": {
+            "type": "object",
+            "description": "Extracted entities from the message text (e.g., dates, numbers). Could be key-value pairs or a more structured object.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "role",
+          "text"
+        ]
+      }
+    },
+    "summary": {
+      "type": "string",
+      "description": "A brief summary of the dialog."
+    },
+    "topics": {
+      "type": "array",
+      "description": "Key topics discussed in the dialog.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "final_request": {
+      "type": "string",
+      "description": "The final user request or concluding part of the dialog, if identifiable."
+    }
+  },
+  "required": [
+    "dialog_id",
+    "messages"
+  ]
+}

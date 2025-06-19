@@ -3,11 +3,11 @@ emoji: 💬
 colorFrom: blue
 colorTo: green
 sdk: gradio
-sdk_version: 3.39.0 # O la versione più recente di Gradio che intendi usare
+sdk_version: "3.50.0" # Using a specific version for consistency with requirements
 app_file: app.py
 pinned: false
 hf_oauth: false
-startup_duration_timeout_s: 300 # Default, può essere aumentato se necessario
+startup_duration_timeout_s: 300
 secrets:
-  GCS_BUCKET_NAME: "" # Verrà sovrascritto dalle variabili d'ambiente dello Space se impostate
-  GOOGLE_APPLICATION_CREDENTIALS: "" # Verrà sovrascritto dalle variabili d'ambiente dello Space se impostate
+  - GOOGLE_APPLICATION_CREDENTIALS # Value to be provided in HF Space settings
+  - GCS_BUCKET_NAME # Value to be provided in HF Space settings
