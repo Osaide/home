@@ -1,0 +1,166 @@
+/* General site-wide styles, typography, basic layout, color variables, form styles, portfolio card base styles */
+:root {
+    --primary: #f59e0b; /* Amber 500 */
+    --secondary: #10b981; /* Emerald 500 */
+    --accent: #3b82f6; /* Blue 500 */
+    --dark: #0f172a; /* Slate 900 */
+    --darker: #020617; /* Slate 950 */
+    --light: #e2e8f0; /* Slate 200 */
+    --nav-width: 5rem; /* 80px */
+    /* Variabili Neon */
+    --clr-neon: var(--primary);
+    --clr-neon-rgb: 245, 158, 11;
+    --clr-bg-neon-hover: var(--darker);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    background-color: var(--darker);
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    color: var(--light);
+    position: relative; /* Necessario per z-index figli */
+}
+
+/* --- Navigazione (Hamburger/Sidebar) --- */
+.sidebar {
+    width: var(--nav-width);
+    border-right: 1px solid rgba(var(--clr-neon-rgb), 0.3);
+    transform: translateX(-100%); /* Nascosto mobile */
+    position: fixed; left: 0; top: 0; height: 100%;
+    background: linear-gradient(to bottom, var(--dark), var(--darker));
+    display: flex; flex-direction: column; align-items: center;
+    padding: 1.5rem 0; z-index: 50;
+    transition: transform 0.3s ease, width 0.3s ease;
+}
+.sidebar.mobile-active {
+    transform: translateX(0);
+    width: 250px;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+}
+.sidebar-brand-text { display: none; }
+.sidebar.mobile-active .sidebar-brand-text { display: block; }
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1rem 0;
+    color: var(--light);
+}
+.sidebar.mobile-active .nav-link {
+    justify-content: flex-start;
+    padding: 0.8rem 1.5rem;
+    gap: 1rem;
+}
+.nav-link i {
+    transition: transform 0.3s ease, color 0.3s ease;
+    width: 2rem;
+    text-align: center;
+}
+.sidebar.mobile-active .nav-link i {
+    width: auto;
+    text-align: left;
+}
+.nav-link:hover { color: var(--clr-neon); }
+.nav-link.active {
+    color: var(--clr-neon);
+    background-color: rgba(var(--clr-neon-rgb), 0.1);
+}
+.sidebar.mobile-active .nav-link.active {
+    border-left: 3px solid var(--clr-neon);
+    padding-left: calc(1.5rem - 3px);
+    background-color: rgba(var(--clr-neon-rgb), 0.15);
+}
+.nav-link-text { display: none; font-size: 0.9rem; font-weight: 500; }
+.sidebar.mobile-active .nav-link-text { display: inline; }
+
+#menu-toggle {
+    display: block;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--clr-neon);
+    color: var(--clr-neon);
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+#menu-toggle:hover {
+    background: var(--clr-neon);
+    color: var(--darker);
+    box-shadow: 0 0 1em 0.2em var(--clr-neon);
+}
+#menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 49;
+}
+#menu-overlay.active { display: block; }
+
+/* --- Main Content Area --- */
+main {
+    position: relative;
+    z-index: 10;
+}
+
+/* --- Sezioni (base) --- */
+/* Responsive padding for .section is handled by Tailwind classes directly on elements */
+ .section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+
+
+/* --- Form Contatti --- */
+.form-input, .form-textarea {
+    background-color: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(226, 232, 240, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--light);
+    width: 100%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(var(--clr-neon-rgb), 0.4);
+}
+.form-textarea { min-height: 120px; resize: vertical; }
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--light);
+}
+
+/* --- Portfolio Card (base) --- */
+.portfolio-card {
+    background: var(--dark);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.portfolio-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.portfolio-tags span {
+    background-color: rgba(var(--clr-neon-rgb), 0.1);
+    color: var(--clr-neon);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}

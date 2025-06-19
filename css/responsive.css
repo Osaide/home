@@ -1,0 +1,33 @@
+/* Media queries and responsive adjustments */
+@media (min-width: 768px) { /* md breakpoint */
+    body {
+        padding-left: var(--nav-width);
+    }
+    .sidebar {
+        transform: translateX(0);
+    }
+    #menu-toggle {
+        display: none;
+    }
+    /* Example: If .section base padding was defined, its responsive override would go here */
+    /* .section { padding: 4rem 2rem; } */
+    /* This was removed as Tailwind handles section padding now */
+}
+
+@media (min-width: 1024px) { /* lg breakpoint */
+    /* Example: If .section base padding was defined, its responsive override would go here */
+    /* .section { padding: 5rem 3rem; } */
+    /* This was removed as Tailwind handles section padding now */
+}
+
+/* Styles for .sidebar.mobile-active width could also be here if preferred,
+   but it's currently in style.css for simplicity as it's not strictly a media query. */
+
+/* Most responsive changes were made via Tailwind utilities directly on elements.
+   This file is for custom CSS media queries if absolutely needed.
+*/
+
+/* Specific responsive overrides from the original <style> block */
+/* @media (max-width: 767px) { ... stili mobile specifici ... } */
+/* This was empty in the original, so nothing to add here unless new specific overrides are needed. */
+/* The other @media queries for .section were removed as Tailwind is used now. */
