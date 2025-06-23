@@ -277,22 +277,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Touch Detection ---
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+
     // --- Inizializza Neon Cursor ---
     try {
-        neonCursor({
-            el: document.getElementById('app'), // MODIFIED: Target the body #app element
+        let cursorOptions = {
+            el: document.getElementById('app'), // Target the body #app element
             shaderPoints: 12,
             curvePoints: 60,
             curveLerp: 0.6,
             radius1: 3,
             radius2: 15,
-            velocityTreshold: 15,
+            velocityTreshold: 15, // Default for desktop
             sleepRadiusX: 150,
             sleepRadiusY: 150,
             sleepTimeCoefX: 0.0025,
             sleepTimeCoefY: 0.0025,
-        });
-        console.log("Neon Cursor Initialized on #app (body) for background mouse-following effect.");
+        };
+
+        if (isTouchDevice) {
+            console.log("Touch device detected. Initializing neonCursor in idle/ambient mode.");
+            cursorOptions.velocityTreshold = 100000; // Set high threshold for touch devices
+        } else {
+            console.log("Non-touch device detected. Initializing neonCursor for mouse-following.");
+        }
+
+        neonCursor(cursorOptions);
+
+        console.log("Neon Cursor Initialized on #app.");
+
     } catch (error) {
         console.error("Failed to initialize Neon Cursor on #app:", error);
     }
