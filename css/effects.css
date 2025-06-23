@@ -115,6 +115,7 @@
     height: 100vh;
     z-index: -1; /* CRUCIAL: Places canvas behind all other body content */
     pointer-events: none; /* CRUCIAL: Canvas itself does not capture mouse events */
+    background-color: rgba(255, 0, 0, 0.3); /* TEMPORARY: Semi-transparent red */
 }
 
 .poi-highlight {
